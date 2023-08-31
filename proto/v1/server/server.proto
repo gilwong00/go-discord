@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package server.v1;
+package proto.server.v1;
 
-option go_package = "github.com/gilwong00/go-discord/gen/server/v1;serverv1";
+option go_package = "github.com/gilwong00/go-discord/gen/proto/v1/server;serverv1";
 
 message Server {
 	string id = 1;

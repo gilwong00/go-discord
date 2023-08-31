@@ -12,7 +12,7 @@ import (
 	"time"
 
 	db "github.com/gilwong00/go-discord/db/sqlc"
-	"github.com/gilwong00/go-discord/gen/proto/user/v1/userv1connect"
+	"github.com/gilwong00/go-discord/gen/proto/v1/user/userv1connect"
 	"github.com/gilwong00/go-discord/internal/userservice"
 	"github.com/gilwong00/go-discord/pkg/cors"
 	"github.com/joho/godotenv"

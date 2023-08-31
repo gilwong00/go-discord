@@ -2,7 +2,7 @@ package userservice
 
 import (
 	db "github.com/gilwong00/go-discord/db/sqlc"
-	"github.com/gilwong00/go-discord/gen/proto/user/v1/userv1connect"
+	"github.com/gilwong00/go-discord/gen/proto/v1/user/userv1connect"
 )
 
 type userService struct {

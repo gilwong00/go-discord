@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"connectrpc.com/connect"
-	userv1 "github.com/gilwong00/go-discord/gen/proto/user/v1"
+	userv1 "github.com/gilwong00/go-discord/gen/proto/v1/user"
 )
 
 func (s *userService) CreateUser(

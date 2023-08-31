@@ -4,7 +4,7 @@ import "google/protobuf/timestamp.proto";
 
 package user.v1;
 
-option go_package = "github.com/gilwong00/go-discord/gen/user/v1;userv1";
+option go_package = "github.com/gilwong00/go-discord/gen/proto/v1/user;userv1";
 
 message User {
 	string id = 1;

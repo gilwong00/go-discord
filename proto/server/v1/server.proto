@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package server.v1;
+
+option go_package = "github.com/gilwong00/go-discord/gen/server/v1;serverv1";
+
+message Server {
+	string id = 1;
+	string name = 2;
+	string logo_url = 3;
+	string invite_code = 4;
+}
+
+service ServerService {
+	rpc CreateServer(CreateServerRequest) returns (CreateServerResponse);
+}
+
+message CreateServerRequest {
+	string name = 1;
+	optional string logo_url = 2;
+}
+
+message CreateServerResponse {
+	Server server = 1;
+}
+

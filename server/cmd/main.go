@@ -12,7 +12,9 @@ import (
 	"time"
 
 	db "github.com/gilwong00/go-discord/db/sqlc"
+	"github.com/gilwong00/go-discord/gen/proto/v1/server/serverv1connect"
 	"github.com/gilwong00/go-discord/gen/proto/v1/user/userv1connect"
+	"github.com/gilwong00/go-discord/internal/serverservice"
 	"github.com/gilwong00/go-discord/internal/userservice"
 	"github.com/gilwong00/go-discord/pkg/cors"
 	"github.com/joho/godotenv"
@@ -36,11 +38,11 @@ func main() {
 	store := db.NewStore(conn)
 	mux := http.NewServeMux()
 	userservice := userservice.NewUserService(store)
-	if err != nil {
-		log.Fatalln("failed to create user service")
-	}
+	serverservice := serverservice.NewServerService(store)
 	userPath, userHandler := userv1connect.NewUserServiceHandler(userservice)
+	serverPath, serverHandler := serverv1connect.NewServerServiceHandler(serverservice)
 	mux.Handle(userPath, userHandler)
+	mux.Handle(serverPath, serverHandler)
 	// new server
 	srv := &http.Server{
 		Addr: "localhost:8080",

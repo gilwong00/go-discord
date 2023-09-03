@@ -12,8 +12,10 @@ import (
 	"time"
 
 	db "github.com/gilwong00/go-discord/db/sqlc"
+	"github.com/gilwong00/go-discord/gen/proto/v1/message/messagev1connect"
 	"github.com/gilwong00/go-discord/gen/proto/v1/server/serverv1connect"
 	"github.com/gilwong00/go-discord/gen/proto/v1/user/userv1connect"
+	"github.com/gilwong00/go-discord/internal/messageservice"
 	"github.com/gilwong00/go-discord/internal/serverservice"
 	"github.com/gilwong00/go-discord/internal/userservice"
 	"github.com/gilwong00/go-discord/pkg/cors"
@@ -36,20 +38,23 @@ func main() {
 		log.Fatal("failed to connect to postgres", err)
 		os.Exit(1)
 	}
-	store := db.NewStore(conn)
 	mux := http.NewServeMux()
-	manager := websocket.NewManager()
+	store := db.NewStore(conn)
+	manager := websocket.NewManager(store)
 	manager.SetupEventHandlers()
 	userservice := userservice.NewUserService(store)
 	serverservice := serverservice.NewServerService(store)
+	messageservice := messageservice.NewMessageService(store)
 	userPath, userHandler := userv1connect.NewUserServiceHandler(userservice)
 	serverPath, serverHandler := serverv1connect.NewServerServiceHandler(serverservice)
+	messagePath, messageHandler := messagev1connect.NewServerServiceHandler(messageservice)
 	mux.Handle(userPath, userHandler)
 	mux.Handle(serverPath, serverHandler)
+	mux.Handle(messagePath, messageHandler)
 	http.HandleFunc("/ws", manager.ServeWS)
 	// new server
 	srv := &http.Server{
-		Addr: "localhost:8080",
+		Addr: "localhost:5000",
 		Handler: h2c.NewHandler(
 			cors.NewCORS().Handler(mux),
 			&http2.Server{},

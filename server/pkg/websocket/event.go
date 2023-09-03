@@ -51,6 +51,8 @@ func BroadcastMessageEventHandler(event Event, c *Client) error {
 	var outgoingEvent Event
 	outgoingEvent.Payload = payload
 	outgoingEvent.Type = EventNewMessage
+	// save message to db
+
 	// Broadcast to all other Clients
 	for client := range c.manager.clients {
 		// Only send to clients inside the same channel
@@ -62,12 +64,10 @@ func BroadcastMessageEventHandler(event Event, c *Client) error {
 }
 
 func JoinChannelHandler(event Event, c *Client) error {
-	// Marshal Payload into wanted format
 	var changeChannelEvent ChangeChannelEvent
 	if err := json.Unmarshal(event.Payload, &changeChannelEvent); err != nil {
 		return fmt.Errorf("unable to unmarshal payload in request: %v", err)
 	}
-	// Add Client to channel
 	c.channel = changeChannelEvent.Name
 	return nil
 }

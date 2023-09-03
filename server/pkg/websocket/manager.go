@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sync"
 
+	db "github.com/gilwong00/go-discord/db/sqlc"
 	"github.com/gorilla/websocket"
 )
 
@@ -32,10 +33,12 @@ type Manager struct {
 	sync.RWMutex
 	clients  ClientMap
 	handlers map[string]EventHandler
+	store    db.Store
 }
 
-func NewManager() *Manager {
+func NewManager(store db.Store) *Manager {
 	return &Manager{
+		store:    store,
 		clients:  make(ClientMap),
 		handlers: make(map[string]EventHandler),
 	}
@@ -54,7 +57,7 @@ func (m *Manager) ServeWS(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := NewClient(conn, m)
+	client := NewClient(conn, m, m.store)
 	// Add the newly created client to the manager
 	m.addClient(client)
 	go client.readMessages()

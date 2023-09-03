@@ -3,6 +3,7 @@ package websocket
 import (
 	"time"
 
+	db "github.com/gilwong00/go-discord/db/sqlc"
 	"github.com/gorilla/websocket"
 )
 
@@ -11,6 +12,7 @@ type Client struct {
 	manager    *Manager
 	egress     chan Event // egress is used to avoid concurrent writes on the WebSocket
 	channel    string
+	store      db.Store
 }
 
 type ClientMap map[*Client]bool
@@ -21,11 +23,16 @@ var (
 	pingInterval = (pongWait * 9) / 10
 )
 
-func NewClient(conn *websocket.Conn, manager *Manager) *Client {
+func NewClient(
+	conn *websocket.Conn,
+	manager *Manager,
+	store db.Store,
+) *Client {
 	return &Client{
 		connection: conn,
 		manager:    manager,
 		egress:     make(chan Event),
+		store:      store,
 	}
 }
 

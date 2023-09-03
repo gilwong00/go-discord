@@ -17,6 +17,7 @@ import (
 	"github.com/gilwong00/go-discord/internal/serverservice"
 	"github.com/gilwong00/go-discord/internal/userservice"
 	"github.com/gilwong00/go-discord/pkg/cors"
+	"github.com/gilwong00/go-discord/pkg/websocket"
 	"github.com/joho/godotenv"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -37,12 +38,15 @@ func main() {
 	}
 	store := db.NewStore(conn)
 	mux := http.NewServeMux()
+	manager := websocket.NewManager()
+	manager.SetupEventHandlers()
 	userservice := userservice.NewUserService(store)
 	serverservice := serverservice.NewServerService(store)
 	userPath, userHandler := userv1connect.NewUserServiceHandler(userservice)
 	serverPath, serverHandler := serverv1connect.NewServerServiceHandler(serverservice)
 	mux.Handle(userPath, userHandler)
 	mux.Handle(serverPath, serverHandler)
+	http.HandleFunc("/ws", manager.ServeWS)
 	// new server
 	srv := &http.Server{
 		Addr: "localhost:8080",

@@ -35,11 +35,14 @@ const (
 const (
 	// UserServiceCreateUserProcedure is the fully-qualified name of the UserService's CreateUser RPC.
 	UserServiceCreateUserProcedure = "/user.v1.UserService/CreateUser"
+	// UserServiceLoginProcedure is the fully-qualified name of the UserService's Login RPC.
+	UserServiceLoginProcedure = "/user.v1.UserService/Login"
 )
 
 // UserServiceClient is a client for the user.v1.UserService service.
 type UserServiceClient interface {
 	CreateUser(context.Context, *connect.Request[user.CreateUserRequest]) (*connect.Response[user.CreateUserResponse], error)
+	Login(context.Context, *connect.Request[user.LoginRequest]) (*connect.Response[user.LoginResponse], error)
 }
 
 // NewUserServiceClient constructs a client for the user.v1.UserService service. By default, it uses
@@ -57,12 +60,18 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			baseURL+UserServiceCreateUserProcedure,
 			opts...,
 		),
+		login: connect.NewClient[user.LoginRequest, user.LoginResponse](
+			httpClient,
+			baseURL+UserServiceLoginProcedure,
+			opts...,
+		),
 	}
 }
 
 // userServiceClient implements UserServiceClient.
 type userServiceClient struct {
 	createUser *connect.Client[user.CreateUserRequest, user.CreateUserResponse]
+	login      *connect.Client[user.LoginRequest, user.LoginResponse]
 }
 
 // CreateUser calls user.v1.UserService.CreateUser.
@@ -70,9 +79,15 @@ func (c *userServiceClient) CreateUser(ctx context.Context, req *connect.Request
 	return c.createUser.CallUnary(ctx, req)
 }
 
+// Login calls user.v1.UserService.Login.
+func (c *userServiceClient) Login(ctx context.Context, req *connect.Request[user.LoginRequest]) (*connect.Response[user.LoginResponse], error) {
+	return c.login.CallUnary(ctx, req)
+}
+
 // UserServiceHandler is an implementation of the user.v1.UserService service.
 type UserServiceHandler interface {
 	CreateUser(context.Context, *connect.Request[user.CreateUserRequest]) (*connect.Response[user.CreateUserResponse], error)
+	Login(context.Context, *connect.Request[user.LoginRequest]) (*connect.Response[user.LoginResponse], error)
 }
 
 // NewUserServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -86,10 +101,17 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 		svc.CreateUser,
 		opts...,
 	)
+	userServiceLoginHandler := connect.NewUnaryHandler(
+		UserServiceLoginProcedure,
+		svc.Login,
+		opts...,
+	)
 	return "/user.v1.UserService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case UserServiceCreateUserProcedure:
 			userServiceCreateUserHandler.ServeHTTP(w, r)
+		case UserServiceLoginProcedure:
+			userServiceLoginHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -101,4 +123,8 @@ type UnimplementedUserServiceHandler struct{}
 
 func (UnimplementedUserServiceHandler) CreateUser(context.Context, *connect.Request[user.CreateUserRequest]) (*connect.Response[user.CreateUserResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.CreateUser is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) Login(context.Context, *connect.Request[user.LoginRequest]) (*connect.Response[user.LoginResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.Login is not implemented"))
 }

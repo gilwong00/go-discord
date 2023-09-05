@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"connectrpc.com/connect"
 	db "github.com/gilwong00/go-discord/db/sqlc"
 	"github.com/gilwong00/go-discord/gen/proto/v1/message/messagev1connect"
 	"github.com/gilwong00/go-discord/gen/proto/v1/server/serverv1connect"
@@ -19,6 +20,8 @@ import (
 	"github.com/gilwong00/go-discord/internal/serverservice"
 	"github.com/gilwong00/go-discord/internal/userservice"
 	"github.com/gilwong00/go-discord/pkg/cors"
+	"github.com/gilwong00/go-discord/pkg/interceptors"
+	"github.com/gilwong00/go-discord/pkg/token"
 	"github.com/gilwong00/go-discord/pkg/websocket"
 	"github.com/joho/godotenv"
 	"golang.org/x/net/http2"
@@ -40,14 +43,23 @@ func main() {
 	}
 	mux := http.NewServeMux()
 	store := db.NewStore(conn)
+	tokenMaker, err := token.NewPasetoMaker(os.Getenv("SYMMETRIC_KEY"))
+	if err != nil {
+		log.Fatal("failed to create token maker", err)
+		os.Exit(1)
+	}
+	interceptors := connect.WithInterceptors(
+		interceptors.NewAuthInterceptor(tokenMaker),
+		interceptors.NewUnaryLoggingInteceptor(),
+	)
 	manager := websocket.NewManager(store)
 	manager.SetupEventHandlers()
 	userservice := userservice.NewUserService(store)
 	serverservice := serverservice.NewServerService(store)
 	messageservice := messageservice.NewMessageService(store)
 	userPath, userHandler := userv1connect.NewUserServiceHandler(userservice)
-	serverPath, serverHandler := serverv1connect.NewServerServiceHandler(serverservice)
-	messagePath, messageHandler := messagev1connect.NewServerServiceHandler(messageservice)
+	serverPath, serverHandler := serverv1connect.NewServerServiceHandler(serverservice, interceptors)
+	messagePath, messageHandler := messagev1connect.NewServerServiceHandler(messageservice, interceptors)
 	mux.Handle(userPath, userHandler)
 	mux.Handle(serverPath, serverHandler)
 	mux.Handle(messagePath, messageHandler)

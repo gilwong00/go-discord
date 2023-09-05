@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateUserRequest, CreateUserResponse } from "./user_pb.js";
+import { CreateUserRequest, CreateUserResponse, LoginRequest, LoginResponse } from "./user_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -19,6 +19,15 @@ export const UserService = {
       name: "CreateUser",
       I: CreateUserRequest,
       O: CreateUserResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc user.v1.UserService.Login
+     */
+    login: {
+      name: "Login",
+      I: LoginRequest,
+      O: LoginResponse,
       kind: MethodKind.Unary,
     },
   }

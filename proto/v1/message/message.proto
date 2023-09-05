@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package proto.message.v1;
+
+option go_package = "github.com/gilwong00/go-discord/gen/proto/v1/message;message";
+
+message Message {
+	string content = 1;
+	optional string file_url = 2;
+}
+
+service ServerService {
+	rpc SendDirectMessage(SendDirectMessageRequest) returns (stream SendDirectMessageResponse);
+}
+
+message SendDirectMessageRequest {
+	Message message = 1;
+	string from_member_id = 2;
+	string to_member_id = 3;
+}
+
+message SendDirectMessageResponse {
+	Message message = 1;
+	google.protobuf.Timestamp sent_at = 2;
+}

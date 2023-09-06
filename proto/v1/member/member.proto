@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package proto.member.v1;
+
+option go_package = "github.com/gilwong00/go-discord/gen/proto/v1/member;member";
+
+enum MemberRole {
+	MemberRole_UNKNOWN = 0;
+	MemberRole_ADMIN = 1;
+	MemberRole_GUEST = 2;
+	MemberRole_MODERATOR = 3;
+}
+
+message Member {
+	string id = 1;
+	MemberRole role = 2;
+	string user_id = 3;
+	string server_id = 4;
+}
+
+service MemberService {
+	rpc CreateServerMember(CreateServerMemberRequest) returns (CreateServerMemberResponse);
+}
+
+message CreateServerMemberRequest {
+	MemberRole role = 1;
+	string user_id = 2;
+	string server_id = 3;
+}
+
+message CreateServerMemberResponse {
+	Member Member = 1;
+}

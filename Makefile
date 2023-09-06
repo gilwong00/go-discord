@@ -23,3 +23,11 @@ migrateup:
 .PHONY: sqlc
 sqlc:
 	cd server && sqlc generate
+
+.PHONY: dockerup
+dockerup:
+	cd server/docker/scripts && sh start.sh
+
+.PHONY: dockerdown
+dockerdown:
+	cd server/docker/scripts && sh destroy.sh

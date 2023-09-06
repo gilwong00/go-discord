@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS members;
+
+ALTER TABLE servers DROP INDEX member_user_id IF EXISTS;

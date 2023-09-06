@@ -13,9 +13,11 @@ import (
 
 	"connectrpc.com/connect"
 	db "github.com/gilwong00/go-discord/db/sqlc"
+	"github.com/gilwong00/go-discord/gen/proto/v1/member/memberv1connect"
 	"github.com/gilwong00/go-discord/gen/proto/v1/message/messagev1connect"
 	"github.com/gilwong00/go-discord/gen/proto/v1/server/serverv1connect"
 	"github.com/gilwong00/go-discord/gen/proto/v1/user/userv1connect"
+	"github.com/gilwong00/go-discord/internal/memberservice"
 	"github.com/gilwong00/go-discord/internal/messageservice"
 	"github.com/gilwong00/go-discord/internal/serverservice"
 	"github.com/gilwong00/go-discord/internal/userservice"
@@ -57,12 +59,15 @@ func main() {
 	userservice := userservice.NewUserService(store)
 	serverservice := serverservice.NewServerService(store)
 	messageservice := messageservice.NewMessageService(store)
+	memberservice := memberservice.NewMemberService(store)
 	userPath, userHandler := userv1connect.NewUserServiceHandler(userservice)
 	serverPath, serverHandler := serverv1connect.NewServerServiceHandler(serverservice, interceptors)
 	messagePath, messageHandler := messagev1connect.NewServerServiceHandler(messageservice, interceptors)
+	memberPath, memberHandler := memberv1connect.NewMemberServiceHandler(memberservice, interceptors)
 	mux.Handle(userPath, userHandler)
 	mux.Handle(serverPath, serverHandler)
 	mux.Handle(messagePath, messageHandler)
+	mux.Handle(memberPath, memberHandler)
 	http.HandleFunc("/ws", manager.ServeWS)
 	// new server
 	srv := &http.Server{

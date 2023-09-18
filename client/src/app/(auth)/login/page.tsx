@@ -1,7 +1,9 @@
 'use client';
 
+import { FormInput } from '@/components/FormInput';
 import { theme } from '@/theme/theme';
 import React from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -31,14 +33,43 @@ const FormContainer = styled.div`
   width: 80%;
 `;
 
+interface LoginForm {
+  username: string;
+  password: string;
+}
+
 const LoginPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<LoginForm>();
+
+  const handleFormSubmit: SubmitHandler<LoginForm> = async data => {};
+
   return (
     <Container>
       <HeaderContainer>
         <h2>Welcome back!</h2>
         <p>We&apos;re so excited to see you again!</p>
       </HeaderContainer>
-      <FormContainer></FormContainer>
+      <FormContainer>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <FormInput
+            {...register('username', { required: true })}
+            label='Username'
+            error={errors.username}
+            type='text'
+          />
+          <FormInput
+            {...register('password', { required: true })}
+            label='Password'
+            error={errors.password}
+            type='text'
+          />
+          <button type='submit'>Login</button>
+        </form>
+      </FormContainer>
     </Container>
   );
 };

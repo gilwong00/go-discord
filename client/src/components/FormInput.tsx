@@ -1,4 +1,5 @@
-import React, { FC, HTMLInputTypeAttribute, InputHTMLAttributes } from 'react';
+import React, { HTMLInputTypeAttribute, forwardRef } from 'react';
+import { FieldError } from 'react-hook-form';
 import styled from 'styled-components';
 
 const FormInputContainer = styled.div``;
@@ -12,17 +13,22 @@ const Input = styled.input``;
 type FormInputProps = {
   label: string;
   isRequired?: boolean;
-  value: InputHTMLAttributes<unknown>['value'];
   type: HTMLInputTypeAttribute;
+  error: FieldError | undefined;
 };
 
-export const FormInput: FC<FormInputProps> = ({ label, type, value }) => {
-  return (
-    <FormInputContainer>
-      <Label>{label}</Label>
-      <InputContainer>
-        <Input type={type} value={value} />
-      </InputContainer>
-    </FormInputContainer>
-  );
-};
+export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
+  ({ label, type, error }, ref) => {
+    return (
+      <FormInputContainer>
+        <Label>{label}</Label>
+        <InputContainer>
+          <Input type={type} ref={ref} />
+        </InputContainer>
+        <>{error}</>
+      </FormInputContainer>
+    );
+  }
+);
+
+FormInput.displayName = 'FormInput';

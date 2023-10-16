@@ -24,7 +24,7 @@ export const ServerService = {
       kind: MethodKind.ServerStreaming,
     },
   }
-} as const;
+};
 
 const $queryService = createQueryService({  service: ServerService,});
 

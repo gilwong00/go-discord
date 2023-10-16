@@ -4,27 +4,22 @@
 
 import { SendDirectMessageRequest, SendDirectMessageResponse } from "./message_pb";
 import { MethodKind } from "@bufbuild/protobuf";
-import { createQueryService } from "@connectrpc/connect-query";
-
-export const typeName = "proto.message.v1.ServerService";
 
 /**
  * @generated from service proto.message.v1.ServerService
  */
-export const ServerService = {
-  typeName: "proto.message.v1.ServerService",
-  methods: {
+export declare const ServerService: {
+  readonly typeName: "proto.message.v1.ServerService",
+  readonly methods: {
     /**
      * @generated from rpc proto.message.v1.ServerService.SendDirectMessage
      */
-    sendDirectMessage: {
-      name: "SendDirectMessage",
-      I: SendDirectMessageRequest,
-      O: SendDirectMessageResponse,
-      kind: MethodKind.ServerStreaming,
+    readonly sendDirectMessage: {
+      readonly name: "SendDirectMessage",
+      readonly I: typeof SendDirectMessageRequest,
+      readonly O: typeof SendDirectMessageResponse,
+      readonly kind: MethodKind.ServerStreaming,
     },
   }
-} as const;
-
-const $queryService = createQueryService({  service: ServerService,});
+};
 

@@ -4,7 +4,7 @@
 
 import { CreateServerRequest, CreateServerResponse } from "./server_pb";
 import { MethodKind } from "@bufbuild/protobuf";
-import { createQueryService, createUnaryHooks, UnaryFunctionsWithHooks } from "@connectrpc/connect-query";
+import { createQueryService, createUnaryHooks } from "@connectrpc/connect-query";
 
 export const typeName = "proto.server.v1.ServerService";
 
@@ -24,11 +24,11 @@ export const ServerService = {
       kind: MethodKind.Unary,
     },
   }
-} as const;
+};
 
 const $queryService = createQueryService({  service: ServerService,});
 
 /**
  * @generated from rpc proto.server.v1.ServerService.CreateServer
  */
-export const createServer: UnaryFunctionsWithHooks<CreateServerRequest, CreateServerResponse> = {   ...$queryService.createServer,  ...createUnaryHooks($queryService.createServer)};
+export const createServer = {   ...$queryService.createServer,  ...createUnaryHooks($queryService.createServer)};

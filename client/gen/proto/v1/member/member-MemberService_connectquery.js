@@ -4,7 +4,7 @@
 
 import { CreateServerMemberRequest, CreateServerMemberResponse } from "./member_pb";
 import { MethodKind } from "@bufbuild/protobuf";
-import { createQueryService, createUnaryHooks, UnaryFunctionsWithHooks } from "@connectrpc/connect-query";
+import { createQueryService, createUnaryHooks } from "@connectrpc/connect-query";
 
 export const typeName = "proto.member.v1.MemberService";
 
@@ -24,11 +24,11 @@ export const MemberService = {
       kind: MethodKind.Unary,
     },
   }
-} as const;
+};
 
 const $queryService = createQueryService({  service: MemberService,});
 
 /**
  * @generated from rpc proto.member.v1.MemberService.CreateServerMember
  */
-export const createServerMember: UnaryFunctionsWithHooks<CreateServerMemberRequest, CreateServerMemberResponse> = {   ...$queryService.createServerMember,  ...createUnaryHooks($queryService.createServerMember)};
+export const createServerMember = {   ...$queryService.createServerMember,  ...createUnaryHooks($queryService.createServerMember)};

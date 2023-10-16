@@ -4,7 +4,7 @@
 
 import { CreateUserRequest, CreateUserResponse, LoginRequest, LoginResponse } from "./user_pb";
 import { MethodKind } from "@bufbuild/protobuf";
-import { createQueryService, createUnaryHooks, UnaryFunctionsWithHooks } from "@connectrpc/connect-query";
+import { createQueryService, createUnaryHooks } from "@connectrpc/connect-query";
 
 export const typeName = "user.v1.UserService";
 
@@ -33,16 +33,16 @@ export const UserService = {
       kind: MethodKind.Unary,
     },
   }
-} as const;
+};
 
 const $queryService = createQueryService({  service: UserService,});
 
 /**
  * @generated from rpc user.v1.UserService.CreateUser
  */
-export const createUser: UnaryFunctionsWithHooks<CreateUserRequest, CreateUserResponse> = {   ...$queryService.createUser,  ...createUnaryHooks($queryService.createUser)};
+export const createUser = {   ...$queryService.createUser,  ...createUnaryHooks($queryService.createUser)};
 
 /**
  * @generated from rpc user.v1.UserService.Login
  */
-export const login: UnaryFunctionsWithHooks<LoginRequest, LoginResponse> = {   ...$queryService.login,  ...createUnaryHooks($queryService.login)};
+export const login = {   ...$queryService.login,  ...createUnaryHooks($queryService.login)};

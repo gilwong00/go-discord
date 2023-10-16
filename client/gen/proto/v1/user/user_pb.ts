@@ -86,6 +86,11 @@ export class CreateUserRequest extends Message<CreateUserRequest> {
    */
   email = "";
 
+  /**
+   * @generated from field: string password = 4;
+   */
+  password = "";
+
   constructor(data?: PartialMessage<CreateUserRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -97,6 +102,7 @@ export class CreateUserRequest extends Message<CreateUserRequest> {
     { no: 1, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "avatar_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateUserRequest {

@@ -5,6 +5,8 @@ import { theme } from '@/theme/theme';
 import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import styled from 'styled-components';
+import Link from 'next/link';
+import { useLogin } from '../hooks/use-login';
 
 const Container = styled.div`
   display: flex;
@@ -33,6 +35,58 @@ const FormContainer = styled.div`
   width: 80%;
 `;
 
+const Form = styled.form`
+  height: 90%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const HyperLink = styled.span`
+  color: ${theme.colors.blue02};
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 5px;
+  font-weight: 500;
+  letter-spacing: normal;
+`;
+
+const PageLink = styled(Link)`
+  color: ${theme.colors.blue02};
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 5px;
+  font-weight: 500;
+  letter-spacing: normal;
+`;
+
+const LoginButtonContainer = styled.div`
+  width: 100%;
+`;
+
+const LoginButton = styled.button`
+  height: 44px;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  background-color: ${theme.colors.primary};
+  cursor: pointer;
+
+  &:hover {
+    opacity: 50%;
+  }
+`;
+
+const RegisterContainer = styled.div`
+  margin-top: 5px;
+`;
+
+const NeedAccount = styled.span`
+  color: ${theme.colors.gray02};
+  font-size: 14px;
+`;
+
 interface LoginForm {
   username: string;
   password: string;
@@ -44,8 +98,14 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors }
   } = useForm<LoginForm>();
+  const { loginUseryMutation } = useLogin();
 
-  const handleFormSubmit: SubmitHandler<LoginForm> = async data => {};
+  const handleFormSubmit: SubmitHandler<LoginForm> = async data => {
+    void loginUseryMutation.mutateAsync({
+      usernameOrEmail: data.username,
+      password: data.password
+    });
+  };
 
   return (
     <Container>
@@ -54,21 +114,34 @@ const LoginPage = () => {
         <p>We&apos;re so excited to see you again!</p>
       </HeaderContainer>
       <FormContainer>
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
+        <Form onSubmit={handleSubmit(handleFormSubmit)}>
           <FormInput
-            {...register('username', { required: true })}
+            {...register('username', { required: 'Username is required' })}
             label='Username'
-            error={errors.username}
+            isRequired
+            backgroundColor={theme.colors.black02}
+            error={errors.username?.message ?? ''}
             type='text'
           />
-          <FormInput
-            {...register('password', { required: true })}
-            label='Password'
-            error={errors.password}
-            type='text'
-          />
-          <button type='submit'>Login</button>
-        </form>
+          <div>
+            <FormInput
+              {...register('password', { required: 'Password is required' })}
+              label='Password'
+              isRequired
+              backgroundColor={theme.colors.black02}
+              error={errors.password?.message ?? ''}
+              type='text'
+            />
+            <HyperLink>Forgot your password?</HyperLink>
+          </div>
+          <LoginButtonContainer>
+            <LoginButton type='submit'>Login</LoginButton>
+            <RegisterContainer>
+              <NeedAccount>Need an account?</NeedAccount>{' '}
+              <PageLink href='/signup'>Register</PageLink>
+            </RegisterContainer>
+          </LoginButtonContainer>
+        </Form>
       </FormContainer>
     </Container>
   );
